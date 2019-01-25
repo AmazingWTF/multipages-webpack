@@ -38,7 +38,8 @@ module.exports = {
   resolve: {
     alias: {
       '@': p('src/')
-    }
+    },
+    extensions: ['.js', '.scss'] //设置require或import的时候可以不需要带后缀
   },
   module: {
     rules: [
@@ -57,13 +58,45 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 8192,
-          name: 'imgs/[name].[hash].[ext]'
+          name: '[name].[hash].[ext]',
+          outputPath: 'assets/imgs',
+          publicPath: '../assets/imgs'
         }
+      },
+      // {
+      //   test: /\.css$/,
+      //   use: ['style-loader', 'css-loader'],
+      //   // options: {
+      //   //   name: 'styles/[name].css'
+      //   // }
+      // },
+      {
+        test: /\.scss$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
+          // {
+          //   loader: 'postcss-loader',
+          //   options: {
+          //     indent: 'postcss',
+          //     plugins: (loader) => [
+          //       require("autoprefixer")
+          //     ]
+          //   }
+          // },
+        ],
       }
     ]
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     ...dealingHtml(['index', 'detail']),
+    // new MiniCssExtractPlugin({
+    //   // Options similar to the same options in webpackOptions.output
+    //   // both options are optional
+    //   filename: "[name].css",
+    //   chunkFilename: "[id].css"
+    // })
   ]
 }

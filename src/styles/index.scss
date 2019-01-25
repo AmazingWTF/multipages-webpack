@@ -1,0 +1,12 @@
+$blue: #000;
+html {
+  color: red;
+  * {
+    font-size: 20px;
+    transition: all 2s;
+    background-color: $blue;
+  }
+  h1 {
+    background-image: url('../imgs/11.png');
+  }
+}
