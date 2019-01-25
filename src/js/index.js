@@ -1,6 +1,6 @@
 import { say } from '@/utils/index';
 import '@/styles/index.scss';
-// import '@/styles/index.css';
+import '@/styles/index.css';
 
 console.log('this is index page');
 

@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 // common chunks 未处理
 
@@ -41,6 +42,11 @@ module.exports = {
     },
     extensions: ['.js', '.scss'] //设置require或import的时候可以不需要带后缀
   },
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin()
+    ]
+  },
   module: {
     rules: [
       {
@@ -63,28 +69,24 @@ module.exports = {
           publicPath: '../assets/imgs'
         }
       },
-      // {
-      //   test: /\.css$/,
-      //   use: ['style-loader', 'css-loader'],
-      //   // options: {
-      //   //   name: 'styles/[name].css'
-      //   // }
-      // },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader'
+        ],
+        // options: {
+        //   name: 'styles/[name].css'
+        // }
+      },
       {
         test: /\.scss$/,
         use: [
           'style-loader',
           'css-loader',
           'sass-loader',
-          // {
-          //   loader: 'postcss-loader',
-          //   options: {
-          //     indent: 'postcss',
-          //     plugins: (loader) => [
-          //       require("autoprefixer")
-          //     ]
-          //   }
-          // },
+          'postcss-loader'
         ],
       }
     ]
@@ -92,11 +94,5 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(['dist']),
     ...dealingHtml(['index', 'detail']),
-    // new MiniCssExtractPlugin({
-    //   // Options similar to the same options in webpackOptions.output
-    //   // both options are optional
-    //   filename: "[name].css",
-    //   chunkFilename: "[id].css"
-    // })
   ]
 }
