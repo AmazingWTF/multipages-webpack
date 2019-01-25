@@ -1,7 +1,9 @@
-import { say } from '@/utils/index';
+import _ from 'lodash';
+import say from '@/utils/index';
 import '@/styles/index.scss';
 import '@/styles/index.css';
 
+console.log(_);
 console.log('this is index page');
 
 const a = [1, 3, 5];
@@ -21,5 +23,4 @@ let b = {
 }
 
 console.log(b);
-
-say();
+console.log(say);

@@ -43,6 +43,10 @@ module.exports = {
     extensions: ['.js', '.scss'] //设置require或import的时候可以不需要带后缀
   },
   optimization: {
+    // 默认情况下，会根据大小决定是否单独打包公共chunk
+    splitChunks: {
+      chunks: 'all',
+    },
     minimizer: [
       new UglifyJsPlugin()
     ]
