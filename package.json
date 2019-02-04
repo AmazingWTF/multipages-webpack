@@ -13,9 +13,17 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.3.1",
     "babel": "^6.23.0",
-    "gulp": "^4.0.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^6.0.0",
     "gulp-babel": "^8.0.0",
+    "gulp-clean-css": "^4.0.0",
+    "gulp-copy": "^4.0.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-rename": "^1.4.0",
+    "gulp-rev": "^9.0.0",
+    "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.1",
-    "pump": "^3.0.0"
+    "run-sequence": "^2.2.1"
   }
 }
