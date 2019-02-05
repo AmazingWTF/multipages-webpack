@@ -13,6 +13,7 @@ const rev = require("gulp-rev");
 const revReplace = require("gulp-rev-replace");
 const filter = require("gulp-filter");
 const fileInclude = require("gulp-file-include");
+const cssModify = require("gulp-modify-css-urls");
 
 const PUBLIC_PATH = path.resolve(__dirname, "dist/assets");
 
@@ -36,7 +37,6 @@ gulp.task("js", () => {
 });
 
 gulp.task("html", () => {
-  console.log("html is success -------");
   return (
     gulp
       .src("./src/*.html")
@@ -100,13 +100,13 @@ gulp.task("pure", () => {
 });
 
 gulp.task("urlReplace", () => {
-  console.log("urlreplace is success -------");
   return gulp
     .src(path.resolve(PUBLIC_PATH, "../", "*.html"))
     .pipe(
       revReplace({
         manifest: gulp.src("dist/rev/*.json"),
         modifyReved: function(name) {
+          console.log("html ---- name: " + name);
           return "assets/" + name;
         }
       })
@@ -114,8 +114,31 @@ gulp.task("urlReplace", () => {
     .pipe(gulp.dest("dist"));
 });
 
+gulp.task("image", () => {
+  return gulp
+    .src("./src/imgs/*")
+    .pipe(gulp.dest(path.join(PUBLIC_PATH, "imgs")));
+});
+
 gulp.task("build", () => {
-  runSequence("clean", ["js", "html", "sass"], "rev", "urlReplace", "pure");
+  runSequence(
+    "clean",
+    ["js", "html", "sass", "image"],
+    "rev",
+    "urlReplace",
+    "pure"
+  );
+});
+
+gulp.task("test", () => {
+  return gulp
+    .src(path.resolve(PUBLIC_PATH, "css/*.css"))
+    .pipe(
+      revReplace({
+        manifest: gulp.src("dist/rev/*.json")
+      })
+    )
+    .pipe(gulp.dest(path.resolve(PUBLIC_PATH, "css")));
 });
 
 gulp.task("dev", () => {
