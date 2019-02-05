@@ -12,6 +12,7 @@ const autoprefixer = require("gulp-autoprefixer");
 const rev = require("gulp-rev");
 const revReplace = require("gulp-rev-replace");
 const filter = require("gulp-filter");
+const fileInclude = require("gulp-file-include");
 
 const PUBLIC_PATH = path.resolve(__dirname, "dist/assets");
 
@@ -35,14 +36,25 @@ gulp.task("js", () => {
 });
 
 gulp.task("html", () => {
-  return gulp
-    .src("./src/*.html")
-    .pipe(
-      htmlmin({
-        collapseWhitespace: true
-      })
-    )
-    .pipe(gulp.dest(path.resolve(PUBLIC_PATH, "../")));
+  console.log("html is success -------");
+  return (
+    gulp
+      .src("./src/*.html")
+      .pipe(
+        fileInclude({
+          prefix: "@@",
+          indent: true,
+          basepath: "./src/templates/"
+        })
+      )
+      .pipe(
+        htmlmin({
+          collapseWhitespace: true
+        })
+      )
+      // .pipe(gulp.dest("test"));
+      .pipe(gulp.dest(path.resolve(PUBLIC_PATH, "../")))
+  );
 });
 
 gulp.task("sass", () => {
@@ -88,13 +100,13 @@ gulp.task("pure", () => {
 });
 
 gulp.task("urlReplace", () => {
+  console.log("urlreplace is success -------");
   return gulp
-    .src("./src/index.html")
+    .src(path.resolve(PUBLIC_PATH, "../", "*.html"))
     .pipe(
       revReplace({
         manifest: gulp.src("dist/rev/*.json"),
         modifyReved: function(name) {
-          console.log("=====" + name);
           return "assets/" + name;
         }
       })
@@ -102,6 +114,10 @@ gulp.task("urlReplace", () => {
     .pipe(gulp.dest("dist"));
 });
 
-gulp.task("default", () => {
-  runSequence("clean", ["js", "html", "sass"], ["rev", "urlReplace"], "pure");
+gulp.task("build", () => {
+  runSequence("clean", ["js", "html", "sass"], "rev", "urlReplace", "pure");
+});
+
+gulp.task("dev", () => {
+  console.log("service is listenning at port 8088");
 });
