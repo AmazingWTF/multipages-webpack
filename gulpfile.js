@@ -7,13 +7,12 @@ const babel = require("gulp-babel");
 const uglify = require("gulp-uglify");
 const gulpSass = require("gulp-sass");
 const htmlmin = require("gulp-htmlmin");
+const postCss = require("gulp-postcss");
 const cleanCss = require("gulp-clean-css");
-const autoprefixer = require("gulp-autoprefixer");
 const rev = require("gulp-rev");
 const revReplace = require("gulp-rev-replace");
 const filter = require("gulp-filter");
 const fileInclude = require("gulp-file-include");
-const cssModify = require("gulp-modify-css-urls");
 
 const PUBLIC_PATH = path.resolve(__dirname, "dist/assets");
 
@@ -58,7 +57,6 @@ gulp.task("html", () => {
 });
 
 gulp.task("sass", () => {
-  const plugins = [autoprefixer({ browsers: ["last 1 version"] })];
   return gulp
     .src("src/scss/*.scss")
     .pipe(
@@ -66,11 +64,8 @@ gulp.task("sass", () => {
         bundleExec: true
       })
     )
-    .pipe(
-      cleanCss({
-        plugins
-      })
-    )
+    .pipe(postCss())
+    .pipe(cleanCss())
     .pipe(gulp.dest(path.join(PUBLIC_PATH, "css")));
 });
 
@@ -99,7 +94,7 @@ gulp.task("pure", () => {
     .pipe(clean());
 });
 
-gulp.task("urlReplace", () => {
+gulp.task("urlReplaceHtml", () => {
   return gulp
     .src(path.resolve(PUBLIC_PATH, "../", "*.html"))
     .pipe(
@@ -114,6 +109,17 @@ gulp.task("urlReplace", () => {
     .pipe(gulp.dest("dist"));
 });
 
+gulp.task("urlReplaceCss", () => {
+  return gulp
+    .src(path.resolve(PUBLIC_PATH, "css/*.css"))
+    .pipe(
+      revReplace({
+        manifest: gulp.src("dist/rev/*.json")
+      })
+    )
+    .pipe(gulp.dest(path.resolve(PUBLIC_PATH, "css")));
+});
+
 gulp.task("image", () => {
   return gulp
     .src("./src/imgs/*")
@@ -125,20 +131,9 @@ gulp.task("build", () => {
     "clean",
     ["js", "html", "sass", "image"],
     "rev",
-    "urlReplace",
+    ["urlReplaceHtml", "urlReplaceCss"],
     "pure"
   );
-});
-
-gulp.task("test", () => {
-  return gulp
-    .src(path.resolve(PUBLIC_PATH, "css/*.css"))
-    .pipe(
-      revReplace({
-        manifest: gulp.src("dist/rev/*.json")
-      })
-    )
-    .pipe(gulp.dest(path.resolve(PUBLIC_PATH, "css")));
 });
 
 gulp.task("dev", () => {
