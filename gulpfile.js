@@ -1,6 +1,6 @@
 const del = require("del");
+const clean = require("gulp-clean");
 const path = require("path");
-const fs = require("fs");
 const gulp = require("gulp");
 const runSequence = require("run-sequence");
 const babel = require("gulp-babel");
@@ -10,13 +10,13 @@ const htmlmin = require("gulp-htmlmin");
 const cleanCss = require("gulp-clean-css");
 const autoprefixer = require("gulp-autoprefixer");
 const rev = require("gulp-rev");
-const rename = require("gulp-rename");
-const copy = require("gulp-copy");
+const revReplace = require("gulp-rev-replace");
+const filter = require("gulp-filter");
 
-const PUBLIC_PATH = path.resolve(__dirname, ".tmp/assets");
+const PUBLIC_PATH = path.resolve(__dirname, "dist/assets");
 
 gulp.task("clean", () => {
-  return del([".tmp"]);
+  return del(["dist"]);
 });
 
 gulp.task("js", () => {
@@ -36,7 +36,7 @@ gulp.task("js", () => {
 
 gulp.task("html", () => {
   return gulp
-    .src("./src/views/*.html")
+    .src("./src/*.html")
     .pipe(
       htmlmin({
         collapseWhitespace: true
@@ -62,18 +62,46 @@ gulp.task("sass", () => {
     .pipe(gulp.dest(path.join(PUBLIC_PATH, "css")));
 });
 
-// 将 .tmp/assets文件夹中添加hash后缀，并且copy到dist
+// 将 dist/assets文件夹中添加hash后缀，并且copy到dist
 gulp.task("rev", () => {
   return gulp
     .src(path.join(PUBLIC_PATH, "**/*"))
     .pipe(rev())
-    .pipe(gulp.dest("dist"))
+    .pipe(gulp.dest(PUBLIC_PATH))
     .pipe(rev.manifest())
-    .pipe(gulp.dest(".tmp/rev"));
+    .pipe(gulp.dest("dist/rev"));
 });
 
-gulp.task("urlReplace", () => {});
+// 删除原版文件(无hash后缀)
+gulp.task("pure", () => {
+  const f = filter(
+    file => {
+      return /^[^-]+\./.test(file.path.split("/").slice(-1)[0]);
+    },
+    { restore: true }
+  );
+
+  return gulp
+    .src(path.join(PUBLIC_PATH, "**/*"))
+    .pipe(f)
+    .pipe(clean());
+});
+
+gulp.task("urlReplace", () => {
+  return gulp
+    .src("./src/index.html")
+    .pipe(
+      revReplace({
+        manifest: gulp.src("dist/rev/*.json"),
+        modifyReved: function(name) {
+          console.log("=====" + name);
+          return "assets/" + name;
+        }
+      })
+    )
+    .pipe(gulp.dest("dist"));
+});
 
 gulp.task("default", () => {
-  runSequence("clean", ["js", "html", "sass"], "rev", "urlReplace");
+  runSequence("clean", ["js", "html", "sass"], ["rev", "urlReplace"], "pure");
 });
