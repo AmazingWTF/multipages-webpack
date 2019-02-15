@@ -4,7 +4,7 @@ import '@/styles/index.scss';
 import '@/styles/index.css';
 
 console.log(_);
-console.log('this is index page');
+console.log('this is index page!++++++++++++!!');
 
 const a = [1, 3, 5];
 
