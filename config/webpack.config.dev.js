@@ -6,18 +6,7 @@ const { path2Absolute, dealingHtml } = require('./utils');
 const config = Object.assign(
   {
     mode: 'development',
-    // entry: {
-    //   vendor: ['jquery'], // 公共模块
-    //   index: path2Absolute('./src/js/index.js'),
-    //   detail: path2Absolute('./src/js/detail.js')
-    // },
     devtool: 'inline-source-map',
-    // resolve: {
-    //   alias: {
-    //     '@': path2Absolute('src/')
-    //   },
-    //   extensions: ['.js', '.scss'] //设置require或import的时候可以不需要带后缀
-    // },
     devServer: {
       index: 'index.html',
       compress: true, // gzip
@@ -53,7 +42,6 @@ const config = Object.assign(
       rules: [
         {
           test: /\.js/,
-          // exclude: /node_modules/,
           include: [
             path2Absolute('src'),
             path2Absolute('test'),

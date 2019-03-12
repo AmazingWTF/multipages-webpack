@@ -9,24 +9,11 @@ const base = require('./webpack.base');
 const config = Object.assign(
   {
     mode: 'production',
-    // entry: {
-    //   vendor: ["jquery"], // 公共模块
-    //   index: path2Absolute("src/js/index.js"),
-    //   detail: path2Absolute('./src/js/detail.js')
-    // },
     output: {
       path: path2Absolute('dist'),
       publicPath: '',
       filename: 'js/[name].[chunkhash:6].js'
-      // path: path2Absolute('dist/js')
     },
-    // resolve: {
-    //   alias: {
-    //     "@": path2Absolute("src/"),
-    //     swiper: "swiper/dist/js/swiper.js"
-    //   },
-    //   extensions: [".js", ".scss"] //设置require或import的时候可以不需要带后缀
-    // },
     optimization: {
       // 默认情况下，会根据大小决定是否单独打包公共chunk
       splitChunks: {
